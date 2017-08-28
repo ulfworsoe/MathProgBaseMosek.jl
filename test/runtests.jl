@@ -1,7 +1,4 @@
-module TestMathProgBase
-
-import Mosek.MosekMathProgSolverInterface
-import Mosek
+using MathProgBaseMosek
 using MathProgBase
 using Base.Test
 
@@ -53,6 +50,9 @@ function test_mathprogbase(solver)
 
 end
 
-test_mathprogbase(Mosek.MosekSolver(QUIET = true))
+test_mathprogbase(MosekSolver(QUIET = true))
 
+if (try Pkg.installed("Convex") != nothing catch false end)
+    include("testconvex.jl")
 end
+

@@ -1,5 +1,22 @@
-module MosekMathProgSolverInterface
-import ..Mosek
+__precompile__()
+module MathProgBaseMosek
+
+export MosekSolver
+
+
+import MathProgBase
+import Mosek
+
+
+
+# Convex.jl only works if MosekSovler is defined in the top-level module
+immutable MosekSolver <: MathProgBase.AbstractMathProgSolver
+  options
+end
+
+MosekSolver(;kwargs...) = MosekSolver(kwargs)
+
+
 
 # Known issues:
 #  - SOCP and QP cannot be mixed, but this is not checked (an error from mosek will be produced, though)
@@ -12,8 +29,6 @@ import ..Mosek
 #
 #  - The concept of dual values is a bit shaky. Specifically; for a variable x there is a dual for the upper bound,
 #    one for the lower bound and one for the conic "bound". The dual value reported will be (slx-sux+snx).
-
-import MathProgBase
 
 status(t::Mosek.Task) = status(t,Mosek.MSK_RES_OK)
 function status(t::Mosek.Task, r::Mosek.Rescode)
@@ -339,9 +354,9 @@ function getsoldef(t::Mosek.Task)
     throw(MosekMathProgModelError("No solution available"))
 end
 
-#include("MosekNLPSolverInterface.jl")
 include("lpqcqpinterface.jl")
 include("conicinterface.jl")
 
-end
+
+end # module
 
